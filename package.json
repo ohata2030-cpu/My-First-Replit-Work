@@ -1,0 +1,13 @@
+{
+  "name": "igedevoice",
+  "version": "1.0.0",
+  "description": "A dynamic digital platform celebrating Igede cultural heritage through innovative music and dating technologies",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server/index.ts",
+    "build": "vite build",
+    "start": "tsx server/index.ts",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  }
+}

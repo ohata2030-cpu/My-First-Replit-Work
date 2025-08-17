@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Music Test</title>
+</head>
+<body>
+    <h1>Direct Music Test</h1>
+    <button id="testPlay">Test Play Button</button>
+    <button id="testAPI">Test API Call</button>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        
+        document.getElementById('testPlay').onclick = async () => {
+            output.innerHTML += '<br>Play button clicked...';
+            
+            try {
+                // Test Web Audio API
+                const audioContext = new AudioContext();
+                
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 1);
+                
+                output.innerHTML += '<br>Audio should be playing...';
+                
+            } catch (error) {
+                output.innerHTML += '<br>Error: ' + error.message;
+            }
+        };
+        
+        document.getElementById('testAPI').onclick = async () => {
+            try {
+                const response = await fetch('/api/music');
+                const tracks = await response.json();
+                output.innerHTML += '<br>API Response: ' + tracks.length + ' tracks found';
+                
+                if (tracks.length > 0) {
+                    const firstTrack = tracks[0];
+                    output.innerHTML += '<br>First track: ' + firstTrack.title + ' - ' + firstTrack.artist;
+                    
+                    // Test play endpoint
+                    const playResponse = await fetch(`/api/music/${firstTrack.id}/play`, { method: 'POST' });
+                    const playResult = await playResponse.json();
+                    output.innerHTML += '<br>Play API result: ' + JSON.stringify(playResult);
+                }
+            } catch (error) {
+                output.innerHTML += '<br>API Error: ' + error.message;
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paystack Payment Test - IgedeVoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e3f2fd;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        .test-title {
+            color: #1976d2;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .payment-btn {
+            background-color: #00c851;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        .payment-btn:hover {
+            background-color: #007e33;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:before {
+            content: "✓";
+            color: #00c851;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .price-highlight {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .test-card {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #1976d2;">🎯 IgedeVoice Payment Testing</h1>
+        <p style="text-align: center; color: #666;">Live Paystack Integration Test Suite</p>
+
+        <div class="test-section">
+            <div class="test-title">💰 Premium Dating Subscription</div>
+            <div class="price-highlight">₦2,500 / month</div>
+            
+            <ul class="feature-list">
+                <li>Advanced matchmaking with detailed preferences</li>
+                <li>Age bracket and location filtering</li>
+                <li>Complexion and physical preferences</li>
+                <li>Priority profile visibility</li>
+                <li>Unlimited messaging with read receipts</li>
+                <li>Extended photo gallery (5 photos vs 3)</li>
+                <li>Body size and height preferences</li>
+                <li>Relationship purpose alignment</li>
+            </ul>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="payment-btn" onclick="initializePayment()">
+                    🚀 Test Live Payment (₦2,500)
+                </button>
+            </div>
+            
+            <div id="payment-status" class="status info" style="display: none;">
+                Initializing payment...
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🧪 Test Card Information</div>
+            <div class="test-card">
+                <h4>Use these test cards for payment testing:</h4>
+                <p><strong>Successful Payment:</strong><br>
+                Card Number: 4084084084084081<br>
+                Expiry: Any future date<br>
+                CVV: Any 3 digits</p>
+                
+                <p><strong>Failed Payment:</strong><br>
+                Card Number: 4084084084084084<br>
+                Expiry: Any future date<br>
+                CVV: Any 3 digits</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📊 Payment Flow Test Results</div>
+            <div id="test-results">
+                <div class="info">
+                    Ready to test payment flow. Click the payment button above to begin.
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🔧 API Endpoints Status</div>
+            <div id="api-status">
+                <button class="payment-btn" onclick="checkApiStatus()">Check API Status</button>
+                <div id="api-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('payment-status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.innerHTML = message;
+            statusDiv.style.display = 'block';
+        }
+
+        function updateTestResults(message) {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML += `<div class="info" style="margin: 10px 0;">${new Date().toLocaleTimeString()}: ${message}</div>`;
+        }
+
+        async function initializePayment() {
+            updateStatus('Initializing payment with live Paystack API...', 'info');
+            updateTestResults('Starting payment initialization test');
+
+            try {
+                // Since we need authentication, we'll simulate the request structure
+                const response = await fetch('/api/payment/initialize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.authorization_url) {
+                    updateStatus('✅ Payment initialized successfully! Redirecting to Paystack...', 'success');
+                    updateTestResults(`Payment URL generated: ${data.authorization_url.substring(0, 50)}...`);
+                    updateTestResults(`Reference: ${data.reference}`);
+                    
+                    // Open payment in new window for testing
+                    const paymentWindow = window.open(data.authorization_url, 'paystack_payment', 'width=600,height=700');
+                    
+                    // Monitor for payment completion
+                    const checkClosed = setInterval(() => {
+                        if (paymentWindow.closed) {
+                            clearInterval(checkClosed);
+                            updateStatus('Payment window closed. Check for verification...', 'info');
+                            updateTestResults('Payment window closed - user may have completed or cancelled payment');
+                        }
+                    }, 1000);
+
+                } else {
+                    updateStatus(`❌ Payment initialization failed: ${data.message || data.error}`, 'error');
+                    updateTestResults(`Error: ${data.message || data.error}`);
+                }
+            } catch (error) {
+                updateStatus(`❌ Network error: ${error.message}`, 'error');
+                updateTestResults(`Network error: ${error.message}`);
+            }
+        }
+
+        async function checkApiStatus() {
+            const apiResults = document.getElementById('api-results');
+            apiResults.innerHTML = '<div class="info">Checking API endpoints...</div>';
+
+            const endpoints = [
+                { name: 'Authentication Check', url: '/api/auth/user' },
+                { name: 'Subscription Status', url: '/api/subscription/status' },
+                { name: 'Dating Profile', url: '/api/dating/profile' }
+            ];
+
+            let results = '<h4>API Status Results:</h4>';
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint.url, {
+                        credentials: 'include'
+                    });
+                    
+                    const status = response.ok ? '✅ Available' : `❌ Error (${response.status})`;
+                    results += `<div class="${response.ok ? 'success' : 'error'}" style="margin: 5px 0; padding: 8px;">${endpoint.name}: ${status}</div>`;
+                } catch (error) {
+                    results += `<div class="error" style="margin: 5px 0; padding: 8px;">${endpoint.name}: ❌ Network Error</div>`;
+                }
+            }
+
+            apiResults.innerHTML = results;
+        }
+
+        // Check if we're on the payment callback page
+        const urlParams = new URLSearchParams(window.location.search);
+        const reference = urlParams.get('reference') || urlParams.get('trxref');
+        
+        if (reference) {
+            updateStatus(`Payment completed with reference: ${reference}`, 'success');
+            updateTestResults(`Payment callback received with reference: ${reference}`);
+            updateTestResults('This indicates the payment flow is working correctly!');
+        }
+
+        // Auto-check API status on page load
+        window.onload = function() {
+            setTimeout(checkApiStatus, 1000);
+        };
+    </script>
+</body>
+</html>
